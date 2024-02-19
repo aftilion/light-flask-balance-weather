@@ -1,0 +1,107 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+    <script>
+        function showMessage(message) {
+            alert(message);
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <!-- Форма добавления пользователя -->
+    <h2>Add User</h2>
+    <form action="/" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="balance">Balance:</label>
+        <input type="number" id="balance" name="balance" required><br><br>
+        <button type="submit">Add User</button>
+    </form>
+
+    <hr>
+
+    <!-- Форма обновления баланса пользователя по городу -->
+    <h2>Update Balance by City</h2>
+    <form action="/update_balance_by_city" method="POST">
+        <label for="user_id">User ID:</label>
+        <input type="number" id="user_id" name="user_id" required><br><br>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required><br><br>
+        <button type="submit">Update Balance by City</button>
+    </form>
+
+    <hr>
+
+
+    <!-- Таблица пользователей -->
+    <h2>Users</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Balance</th>
+            <th>Actions</th>  <!-- Добавляем столбец для действий -->
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user[0] }}</td>
+            <td>{{ user[1] }}</td>
+            <td>{{ user[2] }}</td>
+            <td>
+                <!-- Кнопка для обновления баланса -->
+                <form action="/update_balance" method="POST" style="display: inline;">
+                    <input type="hidden" name="user_id" value="{{ user[0] }}">
+                    <input type="number" name="amount" required>
+                    <button type="submit">Update Balance</button>
+                </form>
+
+                <!-- Кнопка для изменения имени -->
+                <form action="/update_username" method="POST" style="display: inline;">
+                    <input type="hidden" name="user_id" value="{{ user[0] }}">
+                    <input type="text" name="username" required>
+                    <button type="submit">Update Username</button>
+                </form>
+
+                <!-- Кнопка для удаления пользователя -->
+                <form action="/delete_user" method="POST" style="display: inline;">
+                    <input type="hidden" name="user_id" value="{{ user[0] }}">
+                    <button type="submit">Delete User</button>
+                </form>
+
+                <!-- Кнопка для увеличения баланса по городу -->
+                <form action="/update_balance_by_city" method="POST" style="display: inline;">
+                    <input type="hidden" name="user_id" value="{{ user[0] }}">
+                    <input type="hidden" name="action_balance" value="Increase">
+                    <input type="text" id="city-in" name="city" required>
+                    <button type="submit">Increase Balance by Temperature</button>
+                </form>
+
+                 <!-- Кнопка для уменьшения баланса по городу -->
+                <form action="/update_balance_by_city" method="POST" style="display: inline;">
+                    <input type="hidden" name="user_id" value="{{ user[0] }}">
+                    <input type="hidden" name="action_balance" value="Decrease">
+                    <input type="text" id="city-de" name="city" required>
+                    <button type="submit">Decrease Balance by Temperature</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- JavaScript для отображения всплывающего сообщения -->
+    <script>
+        // Проверяем, есть ли сообщение об ошибке в параметрах URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorMessage = urlParams.get('error');
+        if (errorMessage) {
+            showMessage(errorMessage);
+        }
+    </script>
+</body>
+</html>
